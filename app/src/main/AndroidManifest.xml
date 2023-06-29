@@ -13,6 +13,9 @@
         android:theme="@style/Theme.1_ExpenseManager"
         tools:targetApi="31">
         <activity
+            android:name=".SignUpActivity"
+            android:exported="false" />
+        <activity
             android:name=".AddExpenseActivity"
             android:exported="false" />
         <activity
