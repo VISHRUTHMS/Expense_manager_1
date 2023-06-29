@@ -2,6 +2,7 @@ package com.example.a1_expensemanager;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -25,6 +26,7 @@ import kotlin.text.UStringsKt;
 
 public class MainActivity extends AppCompatActivity {
     ActivityMainBinding binding;
+    private ExpenseAdapter expenseAdapter;
 
 
 
@@ -35,6 +37,9 @@ public class MainActivity extends AppCompatActivity {
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        expenseAdapter=new ExpenseAdapter(this);
+        binding.recycler.setAdapter(expenseAdapter);
+        binding.recycler.setLayoutManager(new LinearLayoutManager(this));
 
         Intent intent = new Intent(MainActivity.this, AddExpenseActivity.class);
 
@@ -102,10 +107,12 @@ public class MainActivity extends AppCompatActivity {
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        expenseAdapter.clear();
                         List<DocumentSnapshot> dsList=queryDocumentSnapshots.getDocuments();
                         for(DocumentSnapshot ds:dsList)
                         {
                             ExpenseModel expenseModel=ds.toObject(ExpenseModel.class);
+                            expenseAdapter.add(expenseModel);
                         }
 
 
