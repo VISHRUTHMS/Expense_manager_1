@@ -7,11 +7,17 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.example.a1_expensemanager.databinding.ActivityAddExpenseBinding;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.Calendar;
+import java.util.UUID;
 
 public class AddExpenseActivity extends AppCompatActivity {
     ActivityAddExpenseBinding binding;
+    private String type;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,6 +26,33 @@ public class AddExpenseActivity extends AppCompatActivity {
 
         binding = ActivityAddExpenseBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        type=getIntent().getStringExtra("type");
+        if(type.equals("Income"))
+        {
+            binding.incomeRadio.setChecked(true);
+        }
+        else{
+            binding.incomeRadio.setChecked(true);
+        }
+
+        binding.incomeRadio.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                type="Income";
+
+            }
+        });
+
+
+        binding.expenseRadio.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                type="Expense";
+
+            }
+        });
+
 
     }
 
@@ -44,12 +77,22 @@ public class AddExpenseActivity extends AppCompatActivity {
 
     private void createExpense() {
 
+        String expenseID= UUID.randomUUID().toString();
         String amount=binding.amount.getText().toString();
         String note=binding.note.getText().toString();
         String category=binding.category.getText().toString();
 
+       // String type;
+
         boolean incomeChecked= binding.incomeRadio.isChecked();
 
+        if(incomeChecked)
+        {
+            type="Income";
+        }
+        else{
+            type="Expense";
+        }
 
        // Firebase
 
@@ -59,6 +102,15 @@ public class AddExpenseActivity extends AppCompatActivity {
             binding.amount.setError("Empty");
             return;
         }
+
+        ExpenseModel expenseModel=new ExpenseModel(expenseID,note,category,type,Long.parseLong(amount),Calendar.getInstance().getTimeInMillis());
+
+        FirebaseFirestore
+                .getInstance()
+                .collection("expenses")
+                .document(expenseID)
+                .set(expenseModel);
+        finish();
 
 
     }
