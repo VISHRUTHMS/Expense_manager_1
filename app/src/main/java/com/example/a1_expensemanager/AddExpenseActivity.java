@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.example.a1_expensemanager.databinding.ActivityAddExpenseBinding;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.Calendar;
@@ -103,7 +104,7 @@ public class AddExpenseActivity extends AppCompatActivity {
             return;
         }
 
-        ExpenseModel expenseModel=new ExpenseModel(expenseID,note,category,type,Long.parseLong(amount),Calendar.getInstance().getTimeInMillis());
+        ExpenseModel expenseModel=new ExpenseModel(expenseID,note,category,type,Long.parseLong(amount),Calendar.getInstance().getTimeInMillis(), FirebaseAuth.getInstance().getUid());
 
         FirebaseFirestore
                 .getInstance()
