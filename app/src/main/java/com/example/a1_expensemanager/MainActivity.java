@@ -24,9 +24,10 @@ import java.util.List;
 
 import kotlin.text.UStringsKt;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements OnItemsCLick{
     ActivityMainBinding binding;
     private ExpenseAdapter expenseAdapter;
+    Intent intent;
 
 
 
@@ -37,11 +38,11 @@ public class MainActivity extends AppCompatActivity {
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        expenseAdapter=new ExpenseAdapter(this);
+        expenseAdapter=new ExpenseAdapter(this,this);
         binding.recycler.setAdapter(expenseAdapter);
         binding.recycler.setLayoutManager(new LinearLayoutManager(this));
 
-        Intent intent = new Intent(MainActivity.this, AddExpenseActivity.class);
+         intent = new Intent(MainActivity.this, AddExpenseActivity.class);
 
         binding.addIncome.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -120,5 +121,11 @@ public class MainActivity extends AppCompatActivity {
                 });
 
 
+    }
+
+    @Override
+    public void onClick(ExpenseModel expenseModel) {
+     intent.putExtra("model",expenseModel);
+     startActivity(intent);
     }
 }
