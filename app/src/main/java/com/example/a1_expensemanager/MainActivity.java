@@ -2,6 +2,7 @@ package com.example.a1_expensemanager;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -23,8 +24,10 @@ import java.util.List;
 
 import kotlin.text.UStringsKt;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements OnItemsCLick{
     ActivityMainBinding binding;
+    private ExpenseAdapter expenseAdapter;
+    Intent intent;
 
 
 
@@ -35,8 +38,11 @@ public class MainActivity extends AppCompatActivity {
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        expenseAdapter=new ExpenseAdapter(this,this);
+        binding.recycler.setAdapter(expenseAdapter);
+        binding.recycler.setLayoutManager(new LinearLayoutManager(this));
 
-        Intent intent = new Intent(MainActivity.this, AddExpenseActivity.class);
+         intent = new Intent(MainActivity.this, AddExpenseActivity.class);
 
         binding.addIncome.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -102,10 +108,12 @@ public class MainActivity extends AppCompatActivity {
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        expenseAdapter.clear();
                         List<DocumentSnapshot> dsList=queryDocumentSnapshots.getDocuments();
                         for(DocumentSnapshot ds:dsList)
                         {
                             ExpenseModel expenseModel=ds.toObject(ExpenseModel.class);
+                            expenseAdapter.add(expenseModel);
                         }
 
 
@@ -113,5 +121,11 @@ public class MainActivity extends AppCompatActivity {
                 });
 
 
+    }
+
+    @Override
+    public void onClick(ExpenseModel expenseModel) {
+     intent.putExtra("model",expenseModel);
+     startActivity(intent);
     }
 }
