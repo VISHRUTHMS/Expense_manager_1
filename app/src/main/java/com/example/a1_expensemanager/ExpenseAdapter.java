@@ -54,6 +54,7 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.MyViewHo
     holder.itemView.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View view) {
+
             onItemsCLick.onClick(expenseModel);
         }
     });
@@ -61,7 +62,7 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.MyViewHo
 
     @Override
     public int getItemCount() {
-        return expenseModelList.size();
+         return expenseModelList.size();
     }
 
     public  class MyViewHolder extends RecyclerView.ViewHolder{

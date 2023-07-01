@@ -19,7 +19,7 @@ import java.util.UUID;
 public class AddExpenseActivity extends AppCompatActivity {
     ActivityAddExpenseBinding binding;
     private String type;
-private ExpenseModel expenseModel;
+    private ExpenseModel expenseModel;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,7 +30,9 @@ private ExpenseModel expenseModel;
 
         type=getIntent().getStringExtra("type");
         expenseModel=(ExpenseModel)getIntent().getSerializableExtra("model");
-        if(type!=null){
+
+
+        if(type==null){
 
             type=expenseModel.getType();
             binding.amount.setText(String.valueOf(expenseModel.getAmount()));
@@ -69,7 +71,14 @@ private ExpenseModel expenseModel;
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater=getMenuInflater();
-        menuInflater.inflate(R.menu.add_menu,menu);
+        if(expenseModel==null)
+        {
+            menuInflater.inflate(R.menu.add_menu,menu);
+        }
+        else{
+            menuInflater.inflate(R.menu.update_menu,menu);
+        }
+
         return true;
 
     }
@@ -79,7 +88,7 @@ private ExpenseModel expenseModel;
         int id=item.getItemId();
         if(id==R.id.saveExpense)
         {
-            if(type==null){
+            if(type!=null){
             createExpense();
             }
             else {
@@ -88,7 +97,23 @@ private ExpenseModel expenseModel;
 
             return true;
         }
+
+        if(id==R.id.deleteExpense)
+        {
+            deleteExpense();
+        }
+
         return false;
+    }
+
+    private void deleteExpense() {
+
+        FirebaseFirestore
+                .getInstance()
+                .collection("expenses")
+                .document(expenseModel.getExpenseId())
+                .delete();
+        finish();
     }
 
     private void createExpense() {
@@ -119,7 +144,7 @@ private ExpenseModel expenseModel;
             return;
         }
 
-        ExpenseModel expenseModel=new ExpenseModel(expenseID,note,category,type,Long.parseLong(amount),Calendar.getInstance().getTimeInMillis(), FirebaseAuth.getInstance().getUid());
+        ExpenseModel expenseModel=new ExpenseModel(expenseID,note,category,type,Long.parseLong(amount),Calendar.getInstance().getTimeInMillis(),FirebaseAuth.getInstance().getUid());
 
         FirebaseFirestore
                 .getInstance()
@@ -158,8 +183,7 @@ private ExpenseModel expenseModel;
             return;
         }
 
-        ExpenseModel model=new ExpenseModel(expenseID,note,category,type,Long.parseLong(amount),expenseModel.getTime(),
-                FirebaseAuth.getInstance().getUid());
+        ExpenseModel model=new ExpenseModel(expenseID,note,category,type,Long.parseLong(amount),expenseModel.getTime(),FirebaseAuth.getInstance().getUid());
 
         FirebaseFirestore
                 .getInstance()
